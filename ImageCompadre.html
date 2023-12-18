@@ -67,7 +67,7 @@ function run() {
   }
 
   function updateImages() {
-    var style = getComputedStyle(document.body);
+    // NOTE: Assume before and after have same width and height.
     var width_min_str = style.getPropertyValue('--img-width-min');
     var width_min = parseInt(width_min_str.replace("px", ""));
     var width_max_str = style.getPropertyValue('--img-width-max');
@@ -86,39 +86,32 @@ function run() {
     img_container.style.height = height + "px";
     img_container.style.width = width + "px";
 
-    // NOTE: Assume before and after have same width and height.
     var root = document.documentElement;
-    root.style.setProperty("--img_width_natural", before.naturalWidth);
-    root.style.setProperty("--img_height_natural", before.naturalHeight);
-    root.style.setProperty("--scale", 1);
+    var scale = 1;
 
     img_container.addEventListener("wheel", zoom);
 
     function zoom(e) {
       e.preventDefault();
-      
+
       const delta = Math.sign(e.deltaY);
-      var style = getComputedStyle(document.body);
-      var scale = parseFloat(root.style.getPropertyValue("--scale"));
       const scale_add = parseFloat(style.getPropertyValue("--scale-add"));
 
       if (delta === 1 && scale - scale_add - 1 <= Number.EPSILON) {
-        root.style.setProperty("--scale", 1);
+        scale = 1;
         before.style = null;
         after.style = null;
         return false;
       }
 
-      var width = before.getAttribute("width");
-      var height = before.getAttribute("height");
-      var decimalX = e.offsetX / width * 100;
-      var decimalY = e.offsetY / height * 100;
+      const decimalX = e.offsetX / width * 100;
+      const decimalY = e.offsetY / height * 100;
 
       // delta of 1 means we're zooming out.
       if (delta === 1) {
         // NOTE: image-rendering and max-width should already be set if we're decreasing scale towards 1.
         scale = clamp(scale - scale_add, 1, 10);
-        root.style.setProperty("--scale", scale);
+
         before.style.transform = "scale(" + scale + ")";
         after.style.transform = "scale(" + scale + ")";
 
@@ -133,7 +126,6 @@ function run() {
         after.style.maxWidth = "unset";
 
         scale = clamp(scale + scale_add, 1, 10);
-        root.style.setProperty("--scale", scale);
         before.style.transform = "scale(" + scale + ")";
         after.style.transform = "scale(" + scale + ")";
 
@@ -151,15 +143,15 @@ function clamp(num, min, max) {
 
 
 function initComparisons() {
-  var x = document.getElementsByClassName("img-overlay");
+  const x = document.getElementsByClassName("img-overlay");
   for (var i = 0; i < x.length; i++) {
     compareImages(x[i]);
   }
 
   function compareImages(img) {
     var clicked = 0;
-    var w = img.offsetWidth;
-    var h = img.offsetHeight;
+    const w = img.offsetWidth;
+    const h = img.offsetHeight;
     img.style.width = (w / 2) + "px";
 
     var slider = document.createElement("DIV");
