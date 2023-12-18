@@ -95,6 +95,8 @@ function run() {
     img_container.addEventListener("wheel", zoom);
 
     function zoom(e) {
+      e.preventDefault();
+      
       const delta = Math.sign(e.deltaY);
       var style = getComputedStyle(document.body);
       var scale = parseFloat(root.style.getPropertyValue("--scale"));
