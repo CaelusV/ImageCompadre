@@ -1,3 +1,12 @@
+function setToolbar() {
+    var zoomSlider = document.getElementById("zoom-slider");
+
+    zoomSlider.oninput = function() {
+        document.documentElement.style.setProperty("--zoom-speed", this.value);
+    }
+}
+
+
 var has_run = false;
 function run() {
     var style = getComputedStyle(document.body);
@@ -76,10 +85,11 @@ function run() {
             e.preventDefault();
 
             const delta = Math.sign(e.deltaY);
-            const scale_add = parseFloat(style.getPropertyValue("--scale-add"));
+            const zoom_factor = parseFloat(style.getPropertyValue("--zoom-factor"));
+            const zoom_speed = parseFloat(style.getPropertyValue("--zoom-speed"));
             const zoom_text = document.getElementById("zoom-level");
 
-            if (delta === 1 && scale - scale_add - 1 <= Number.EPSILON) {
+            if (delta === 1 && scale - zoom_speed * zoom_factor - 1 <= Number.EPSILON) {
                 scale = 1;
                 zoom_text.textContent = "1.00";
                 before.style = null;
@@ -93,7 +103,7 @@ function run() {
             // delta of 1 means we're zooming out.
             if (delta === 1) {
                 // NOTE: image-rendering and max-width should already be set if we're decreasing scale towards 1.
-                scale = clamp(scale - scale_add, 1, 10);
+                scale = clamp(scale - zoom_speed * zoom_factor, 1, 10);
 
                 before.style.transform = "scale(" + scale + ")";
                 after.style.transform = "scale(" + scale + ")";
@@ -108,7 +118,7 @@ function run() {
                 before.style.maxWidth = "unset";
                 after.style.maxWidth = "unset";
 
-                scale = clamp(scale + scale_add, 1, 10);
+                scale = clamp(scale + zoom_speed * zoom_factor, 1, 10);
                 before.style.transform = "scale(" + scale + ")";
                 after.style.transform = "scale(" + scale + ")";
 

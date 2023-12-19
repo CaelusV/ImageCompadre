@@ -7,7 +7,8 @@
     /* Height is automatically scaled with width */
     --img-width-min: 1000px;
     --img-width-max: 1600px;
-    --scale-add: 0.3; /* How much you zoom when using mousewheel */
+    --zoom-factor: 0.15; /* Base zoom value to calculate zoom speed from */
+    --zoom-speed: 1; /* How much you zoom when using mousewheel */
 }
 
 * {
@@ -81,4 +82,8 @@ body {
 
 .zoom-level {
     font-size: 24px;
+}
+
+.zoom-tools {
+    display: inline-block;
 }

@@ -20,7 +20,12 @@
         <input type="file" id="select-after" name="select-after" accept="image/*">
       </div>
     </div>
-    <span class="zoom-level">Zoom: <span class="zoom-level" id="zoom-level">1.00</span>x</span>
+    <div class="zoom-tools">
+      <span class="zoom-level">Zoom: <span class="zoom-level" id="zoom-level">1.00</span>x</span>
+      <br>
+      <span>Speed</span>
+      <input type="range" min="0" max="6" step="0.05" value="2" class="zoom-slider" id="zoom-slider">
+    </div>
   </div>
 
   <div class="img-comp-container" id="comp-container">
@@ -34,6 +39,7 @@
 
   <script>
     run();
+    setToolbar();
   </script>
 </body>
 </html>
