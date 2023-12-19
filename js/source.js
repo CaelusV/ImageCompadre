@@ -16,9 +16,15 @@ function run() {
     var before = document.getElementById('before');
     before.setAttribute('src', before_path);
     var after = document.getElementById('after');
-    after.setAttribute('src', after_path)
+    after.setAttribute('src', after_path);
 
     before.onload = function() {
+        updateImages();
+        initComparisons();
+        has_run = true;
+    }
+
+    after.onload = function() {
         updateImages();
         initComparisons();
         has_run = true;
@@ -37,10 +43,13 @@ function run() {
             width_min,
             width_max
         );
+        console.log("width:"+width);
         var ratio = width / Math.max(before.naturalWidth, after.naturalWidth);
+        console.log("ratio:"+ratio);
         var height = Math.round(
             (before.naturalWidth > after.naturalWidth ? before.naturalHeight : after.naturalHeight) * ratio
         );
+        console.log("height:"+height);
 
         before.setAttribute('width', width);
         before.setAttribute('height', height);
