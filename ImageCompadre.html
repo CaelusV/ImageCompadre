@@ -1,225 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-/* THE FIVE VARIABLES IN ROOT ARE ONLY THING YOU NEED TO CHANGE */
-/* NOTE: Do NOT surround variables in quotes */
-:root {
-  /* Before and after images, using relative paths */
-	--before: img_snow.jpg;
-	--after: img_forest.jpg;
-  /* Height is automatically scaled with width */
-  --img-width-min: 1000px;
-	--img-width-max: 1600px;
-  --scale-add: 0.3; /* How much you zoom when using mousewheel */
-}
-
-* {box-sizing: border-box;}
-
-.img-comp-container {
-  position: relative;
-}
-
-.img-comp-img {
-  position: absolute;
-  width: auto;
-  height: auto;
-  overflow: hidden;
-}
-
-.img-comp-img img {
-  display: block;
-}
-
-.img-slider {
-  position: absolute;
-  z-index:9;
-  cursor: ew-resize;
-  /* Set the appearance of the slider */
-  width: 8px;
-  height: 50%;
-  background-color: #2196F3;
-  opacity: 1;
-  border-radius: 0%;
-}
-
-.img-slider:hover {
-  opacity: 0.4;
-}
-</style>
-
-<script>
-function run() {
-  var style = getComputedStyle(document.body);
-  var before_path = style.getPropertyValue('--before');
-  var after_path = style.getPropertyValue('--after');
-
-  var before = document.getElementById('before');
-  before.setAttribute('src', before_path);
-  var after = document.getElementById('after');
-  after.setAttribute('src', after_path)
-
-  before.onload = function() {
-    updateImages();
-    initComparisons();
-  }
-
-  function updateImages() {
-    // NOTE: Assume before and after have same width and height.
-    var width_min_str = style.getPropertyValue('--img-width-min');
-    var width_min = parseInt(width_min_str.replace("px", ""));
-    var width_max_str = style.getPropertyValue('--img-width-max');
-    var width_max = parseInt(width_max_str.replace("px", ""));
-    var width = clamp(before.naturalWidth, width_min, width_max);
-
-    var ratio = width / before.naturalWidth;
-    var height = Math.round(before.naturalHeight * ratio);
-  
-    before.setAttribute('width', width);
-    before.setAttribute('height', height);
-    after.setAttribute('width', width);
-    after.setAttribute('height', height);
-  
-    var img_container = document.getElementById("container");
-    img_container.style.height = height + "px";
-    img_container.style.width = width + "px";
-
-    var root = document.documentElement;
-    var scale = 1;
-
-    img_container.addEventListener("wheel", zoom);
-
-    function zoom(e) {
-      e.preventDefault();
-
-      const delta = Math.sign(e.deltaY);
-      const scale_add = parseFloat(style.getPropertyValue("--scale-add"));
-
-      if (delta === 1 && scale - scale_add - 1 <= Number.EPSILON) {
-        scale = 1;
-        before.style = null;
-        after.style = null;
-        return false;
-      }
-
-      const decimalX = e.offsetX / width * 100;
-      const decimalY = e.offsetY / height * 100;
-
-      // delta of 1 means we're zooming out.
-      if (delta === 1) {
-        // NOTE: image-rendering and max-width should already be set if we're decreasing scale towards 1.
-        scale = clamp(scale - scale_add, 1, 10);
-
-        before.style.transform = "scale(" + scale + ")";
-        after.style.transform = "scale(" + scale + ")";
-
-        before.style.transformOrigin = decimalX + "% " + decimalY + "% 0px";
-        after.style.transformOrigin = decimalX + "% " + decimalY + "% 0px";
-      }
-      else {
-        before.style.imageRendering = "pixelated";
-        after.style.imageRendering = "pixelated";
-
-        before.style.maxWidth = "unset";
-        after.style.maxWidth = "unset";
-
-        scale = clamp(scale + scale_add, 1, 10);
-        before.style.transform = "scale(" + scale + ")";
-        after.style.transform = "scale(" + scale + ")";
-
-        before.style.transformOrigin = decimalX + "% " + decimalY + "% 0px";
-        after.style.transformOrigin = decimalX + "% " + decimalY + "% 0px";
-      }
-    }
-  }
-}
-
-// Disgusting that JS doesn't have a clamp function. Then again, fuck readability, right?
-function clamp(num, min, max) {
-  return Math.max(min, Math.min(num, max));
-}
-
-
-function initComparisons() {
-  const x = document.getElementsByClassName("img-overlay");
-  for (var i = 0; i < x.length; i++) {
-    compareImages(x[i]);
-  }
-
-  function compareImages(img) {
-    var clicked = 0;
-    const w = img.offsetWidth;
-    const h = img.offsetHeight;
-    img.style.width = (w / 2) + "px";
-
-    var slider = document.createElement("DIV");
-    slider.setAttribute("class", "img-slider");
-    img.parentElement.insertBefore(slider, img);
-    slider.style.top = (h / 2) - (slider.offsetHeight / 2) + "px";
-    slider.style.left = (w / 2) - (slider.offsetWidth / 2) + "px";
-
-    slider.addEventListener("mousedown", slideReady);
-    window.addEventListener("mouseup", slideFinish);
-    slider.addEventListener("touchstart", slideReady);
-    window.addEventListener("touchend", slideFinish);
-
-    function slideReady(e) {
-      // Prevent any other actions that may occur when moving over the image.
-      e.preventDefault();
-
-      clicked = 1;
-      window.addEventListener("mousemove", slideMove);
-      window.addEventListener("touchmove", slideMove);
-    }
-
-    function slideFinish() {
-      clicked = 0;
-    }
-
-    function slideMove(e) {
-      if (clicked == 0) return false;
-
-      var pos = clamp(getCursorPosX(e), 0, w);
-      slide(pos);
-    }
-
-    function getCursorPosX(e) {
-      e = (e.changedTouches) ? e.changedTouches[0] : e;
-
-      var positions = img.getBoundingClientRect();
-      var x = e.pageX - positions.left;
-      // Consider any page scrolling.
-      x = x - window.pageXOffset;
-      return x;
-    }
-
-    function slide(x) {
-      img.style.width = x + "px";
-      slider.style.left = img.offsetWidth - (slider.offsetWidth / 2) + "px";
-    }
-  }
-}
-</script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImageCompadre 0.1</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="text/javascript" src="js/source.js"></script>
 </head>
+
 <body>
-
-<h1>ImageCompare 0.1</h1>
-
-<div class="img-comp-container" id="container">
-  <div class="img-comp-img">
-    <img id="before">
+  <div class="select-images">
+    <div>
+      <label for="select-before">Before Image</label>
+      <input type="file" id="select-before" name="select-before" accept="image/*">
+    </div>
+    <div>
+      <label for="select-after">After Image</label>
+      <input type="file" id="select-after" name="select-after" accept="image/*">
+    </div>
   </div>
-  <div class="img-comp-img img-overlay">
-    <img id="after">
+
+  <div class="img-comp-container" id="comp-container">
+    <div class="img-comp-img">
+      <img id="after">
+    </div>
+    <div class="img-comp-img" id="img-overlay">
+      <img id="before">
+    </div>
   </div>
-</div>
 
-<script>
-run();
-</script>
-
+  <script>
+    run();
+  </script>
 </body>
 </html>
