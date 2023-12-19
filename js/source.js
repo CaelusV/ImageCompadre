@@ -77,9 +77,11 @@ function run() {
 
             const delta = Math.sign(e.deltaY);
             const scale_add = parseFloat(style.getPropertyValue("--scale-add"));
+            const zoom_text = document.getElementById("zoom-level");
 
             if (delta === 1 && scale - scale_add - 1 <= Number.EPSILON) {
                 scale = 1;
+                zoom_text.textContent = "1.00";
                 before.style = null;
                 after.style = null;
                 return false;
@@ -113,6 +115,7 @@ function run() {
                 before.style.transformOrigin = decimalX + "% " + decimalY + "% 0px";
                 after.style.transformOrigin = decimalX + "% " + decimalY + "% 0px";
             }
+            zoom_text.textContent = scale.toFixed(2);
         }
     }
 }

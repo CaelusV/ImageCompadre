@@ -10,7 +10,11 @@
     --scale-add: 0.3; /* How much you zoom when using mousewheel */
 }
 
-* {box-sizing: border-box;}
+* {
+    box-sizing: border-box;
+    color: orange;
+    font-size: 18px;
+}
 
 body {
     background-image: url("../background.png");
@@ -50,8 +54,7 @@ body {
 }
 
 .select-images {
-    background: rgba(0, 0, 0, 0.5);
-    margin: 5px;
+    display: inline-block;
 }
 
 .select-images > div {
@@ -59,8 +62,6 @@ body {
 }
 
 .select-images > div > * {
-    color: orange;
-    font-size: 18px;
     text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000;
 }
 
@@ -71,4 +72,13 @@ body {
 .select-images > div > label {
     display: inline-block;
     width: 100px;
+}
+
+.toolbar {
+    background: rgba(0, 0, 0, 0.8);
+    margin: 5px;
+}
+
+.zoom-level {
+    font-size: 24px;
 }

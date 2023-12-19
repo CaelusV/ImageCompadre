@@ -9,15 +9,18 @@
 </head>
 
 <body>
-  <div class="select-images">
-    <div>
-      <label for="select-before">Before Image</label>
-      <input type="file" id="select-before" name="select-before" accept="image/*">
+  <div class="toolbar">
+    <div class="select-images">
+      <div>
+        <label for="select-before">Before Image</label>
+        <input type="file" id="select-before" name="select-before" accept="image/*">
+      </div>
+      <div>
+        <label for="select-after">After Image</label>
+        <input type="file" id="select-after" name="select-after" accept="image/*">
+      </div>
     </div>
-    <div>
-      <label for="select-after">After Image</label>
-      <input type="file" id="select-after" name="select-after" accept="image/*">
-    </div>
+    <span class="zoom-level">Zoom: <span class="zoom-level" id="zoom-level">1.00</span>x</span>
   </div>
 
   <div class="img-comp-container" id="comp-container">
