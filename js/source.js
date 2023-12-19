@@ -52,9 +52,12 @@ function run() {
         function changeAfter(e) { changePicture(e, false); }
 
         function changePicture(e, is_before) {
+            var file_input = document.getElementById(is_before ? "select-before" : "select-after");
             if (!e.target.files || !e.target.files[0]) {
+                file_input.style.color = "red";
                 return;
             }
+            file_input.style.color = "green";
 
             var before = document.getElementById('before');
             var reader = new FileReader();
