@@ -75,13 +75,16 @@ function run() {
         img_container.style.height = height + "px";
         img_container.style.width = width + "px";
 
-        if (!has_run) {
-            img_container.addEventListener("wheel", zoom);
-            var select_before = document.getElementById("select-before");
-            select_before.addEventListener("change", changeBefore);
-            var select_after = document.getElementById("select-after");
-            select_after.addEventListener("change", changeAfter);
+        var select_before = document.getElementById("select-before");
+        var select_after = document.getElementById("select-after");
+        if (has_run) {
+            img_container.removeEventListener("wheel", zoom);
+            select_before.removeEventListener("change", changeBefore);
+            select_after.removeEventListener("change", changeAfter);
         }
+        img_container.addEventListener("wheel", zoom);
+        select_before.addEventListener("change", changeBefore);
+        select_after.addEventListener("change", changeAfter);
 
         function changeBefore(e) { changePicture(e, true); }
         function changeAfter(e) { changePicture(e, false); }
@@ -176,13 +179,17 @@ function initComparisons() {
     slider.style.top = (h / 2) - (slider.offsetHeight / 2) + "px";
     slider.style.left = (w / 2) - (slider.offsetWidth / 2) + "px";
 
-    if (!has_run) {
-        var img_container = document.getElementById("comp-container");
-        img_container.addEventListener("mousedown", slideReady);
-        img_container.addEventListener("touchstart", slideReady);
-        window.addEventListener("mouseup", slideFinish);
-        window.addEventListener("touchend", slideFinish);
+    var img_container = document.getElementById("comp-container");
+    if (has_run) {
+        img_container.removeEventListener("mousedown", slideReady);
+        img_container.removeEventListener("touchstart", slideReady);
+        window.removeEventListener("mouseup", slideFinish);
+        window.removeEventListener("touchend", slideFinish);
     }
+    img_container.addEventListener("mousedown", slideReady);
+    img_container.addEventListener("touchstart", slideReady);
+    window.addEventListener("mouseup", slideFinish);
+    window.addEventListener("touchend", slideFinish);
 
     function slideReady(e) {
         // Prevent any other actions that may occur when moving over the image.
