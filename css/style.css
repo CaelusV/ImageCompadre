@@ -21,10 +21,26 @@ body {
     background-image: url("../background.png");
 }
 
+.before-title {
+    right: 20px;
+    top: 30px;
+}
+
+.after-title {
+    left: 20px;
+    top: 30px;
+}
+
+.description {
+    bottom: 20px;
+    left: 20px;
+}
+
 .img-comp-container {
     position: relative;
     margin: 0 auto;
     outline: solid 2px orange;
+    overflow: hidden;
 }
 
 .img-comp-img {
@@ -42,9 +58,8 @@ body {
     position: absolute;
     z-index:9;
     cursor: ew-resize;
-    /* Set the appearance of the slider */
-    width: 8px;
-    height: 50%;
+    width: 3px;
+    height: 100%;
     background-color: orange;
     opacity: 1;
     border-radius: 0%;
@@ -54,12 +69,21 @@ body {
     opacity: 0.4;
 }
 
+.overlay-text {
+    position: absolute;
+    z-index: 100;
+    text-shadow: 1px 1px 3px #000, -1px 1px 3px #000;
+    white-space: nowrap;
+    color: white;
+    font-size: 24px;
+}
+
 .select-images {
     display: inline-block;
 }
 
 .select-images > div {
-    padding: 4px;
+    padding-bottom: 5px;
 }
 
 .select-images > div > * {
@@ -75,9 +99,23 @@ body {
     width: 100px;
 }
 
+.title-tools {
+    display: inline-block;
+}
+
+.title-tools > div {
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.title-tools > div > input {
+    color: black;
+}
+
 .toolbar {
     background: rgba(0, 0, 0, 0.8);
     margin: 5px;
+    padding: 5px;
 }
 
 .zoom-level {
@@ -86,4 +124,5 @@ body {
 
 .zoom-tools {
     display: inline-block;
+    margin-right: 15px;
 }

@@ -1,8 +1,26 @@
 function setToolbar() {
     var zoomSlider = document.getElementById("zoom-slider");
+    var beforeTitleInput = document.getElementById("before-title-input");
+    var beforeTitle = document.getElementById("before-title");
+    var afterTitleInput = document.getElementById("after-title-input");
+    var afterTitle = document.getElementById("after-title");
+    var descriptionInput = document.getElementById("description-input");
+    var description = document.getElementById("description");
 
     zoomSlider.oninput = function() {
         document.documentElement.style.setProperty("--zoom-speed", this.value);
+    }
+
+    beforeTitleInput.oninput = function(e) {
+        beforeTitle.innerText = e.target.value;
+    }
+
+    afterTitleInput.oninput = function(e) {
+        afterTitle.innerText = e.target.value;
+    }
+
+    descriptionInput.oninput = function(e) {
+        description.innerText = e.target.value;
     }
 }
 
@@ -43,13 +61,10 @@ function run() {
             width_min,
             width_max
         );
-        console.log("width:"+width);
         var ratio = width / Math.max(before.naturalWidth, after.naturalWidth);
-        console.log("ratio:"+ratio);
         var height = Math.round(
             (before.naturalWidth > after.naturalWidth ? before.naturalHeight : after.naturalHeight) * ratio
         );
-        console.log("height:"+height);
 
         before.setAttribute('width', width);
         before.setAttribute('height', height);
@@ -60,11 +75,13 @@ function run() {
         img_container.style.height = height + "px";
         img_container.style.width = width + "px";
 
-        img_container.addEventListener("wheel", zoom);
-        var select_before = document.getElementById("select-before");
-        select_before.addEventListener("change", changeBefore);
-        var select_after = document.getElementById("select-after");
-        select_after.addEventListener("change", changeAfter);
+        if (!has_run) {
+            img_container.addEventListener("wheel", zoom);
+            var select_before = document.getElementById("select-before");
+            select_before.addEventListener("change", changeBefore);
+            var select_after = document.getElementById("select-after");
+            select_after.addEventListener("change", changeAfter);
+        }
 
         function changeBefore(e) { changePicture(e, true); }
         function changeAfter(e) { changePicture(e, false); }
@@ -92,7 +109,6 @@ function run() {
 
         function zoom(e) {
             e.preventDefault();
-
             const delta = Math.sign(e.deltaY);
             const zoom_factor = parseFloat(style.getPropertyValue("--zoom-factor"));
             const zoom_speed = parseFloat(style.getPropertyValue("--zoom-speed"));
@@ -145,7 +161,7 @@ function clamp(num, min, max) {
     return Math.max(min, Math.min(num, max));
 }
 
-var slider;
+
 function initComparisons() {
     const overlay = document.getElementById("img-overlay");
     var clicked = 0;
@@ -156,24 +172,27 @@ function initComparisons() {
     const h = overlay.offsetHeight;
     overlay.style.width = (w / 2) + "px";
 
-    if (!has_run) {
-        slider = document.createElement("div");
-        slider.setAttribute("class", "img-slider");
-        slider.setAttribute("id", "img-slider");
-        overlay.parentElement.insertBefore(slider, overlay);
-    }
-
+    const slider = document.getElementById("img-slider");
     slider.style.top = (h / 2) - (slider.offsetHeight / 2) + "px";
     slider.style.left = (w / 2) - (slider.offsetWidth / 2) + "px";
 
-    slider.addEventListener("mousedown", slideReady);
-    window.addEventListener("mouseup", slideFinish);
-    slider.addEventListener("touchstart", slideReady);
-    window.addEventListener("touchend", slideFinish);
+    if (!has_run) {
+        var img_container = document.getElementById("comp-container");
+        img_container.addEventListener("mousedown", slideReady);
+        img_container.addEventListener("touchstart", slideReady);
+        window.addEventListener("mouseup", slideFinish);
+        window.addEventListener("touchend", slideFinish);
+    }
 
     function slideReady(e) {
         // Prevent any other actions that may occur when moving over the image.
         e.preventDefault();
+        // Make the slider jump to where we click before we move the mouse.
+        var pos = clamp(getCursorPosX(e), 0, w);
+        slide(pos);
+
+        var description = document.getElementById("description");
+        description.style.opacity = 0.4;
 
         clicked = 1;
         window.addEventListener("mousemove", slideMove);
@@ -181,6 +200,8 @@ function initComparisons() {
     }
 
     function slideFinish() {
+        var description = document.getElementById("description");
+        description.style.opacity = 1;
         clicked = 0;
     }
 

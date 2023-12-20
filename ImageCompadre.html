@@ -26,15 +26,35 @@
       <span>Speed</span>
       <input type="range" min="0" max="6" step="0.05" value="2" class="zoom-slider" id="zoom-slider">
     </div>
+    <div class="title-tools">
+      <div>
+        <label for="before-title-input">Before title:</label>
+        <input type="text" id="before-title-input" name="before-title-input">
+      </div>
+      <div>
+        <label for="after-title-input">After title:</label>
+        <input type="text" id="after-title-input" name="after-title-input">
+      </div>
+      <br>
+      <div>
+        <label for="description-input">Description:</label>
+        <input type="text" id="description-input" name="description-input">
+      </div>
+    </div>
   </div>
 
   <div class="img-comp-container" id="comp-container">
     <div class="img-comp-img">
       <img id="after">
     </div>
+    <div class="img-slider" id="img-slider">
+      <div class="before-title overlay-text" id="before-title"></div>
+      <div class="after-title overlay-text" id="after-title"></div>
+    </div>
     <div class="img-comp-img" id="img-overlay">
       <img id="before">
     </div>
+    <div class="description overlay-text" id="description"></div>
   </div>
 
   <script>
