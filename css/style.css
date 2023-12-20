@@ -2,8 +2,8 @@
 /* NOTE: Do NOT surround variables in quotes */
 :root {
     /* Before and after images, using relative paths */
-    --before: img_forest.jpg;
-    --after: img_snow.jpg;
+    --before: img_forest_blur.jpg;
+    --after: img_forest.jpg;
     /* Height is automatically scaled with width */
     --img-width-min: 1000px;
     --img-width-max: 1600px;
