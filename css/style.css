@@ -52,6 +52,7 @@ body {
 
 .img-comp-img img {
     display: block;
+    background: black;
 }
 
 .img-slider {
