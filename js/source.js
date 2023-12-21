@@ -51,18 +51,18 @@ function run() {
     function updateImages() {
         var scale = 1;
         var width_min_str = style.getPropertyValue('--img-width-min');
-        var width_min = parseInt(width_min_str.replace("px", ""));
+        const width_min = parseInt(width_min_str.replace("px", ""));
         var width_max_str = style.getPropertyValue('--img-width-max');
-        var width_max = parseInt(width_max_str.replace("px", ""));
+        const width_max = parseInt(width_max_str.replace("px", ""));
 
         // Use the greatest width of the two images, and the height of that image.
-        var width = clamp(
+        const width = clamp(
             Math.max(before.naturalWidth, after.naturalWidth),
             width_min,
             width_max
         );
-        var ratio = width / Math.max(before.naturalWidth, after.naturalWidth);
-        var height = Math.round(
+        const ratio = width / Math.max(before.naturalWidth, after.naturalWidth);
+        const height = Math.round(
             (before.naturalWidth > after.naturalWidth ? before.naturalHeight : after.naturalHeight) * ratio
         );
 
@@ -71,16 +71,22 @@ function run() {
         after.setAttribute('width', width);
         after.setAttribute('height', height);
 
-        var img_container = document.getElementById("comp-container");
+        const zoom_text = document.getElementById("zoom-level");
+        const select_before = document.getElementById("select-before");
+        const select_after = document.getElementById("select-after");
+        const img_container = document.getElementById("comp-container");
         img_container.style.height = height + "px";
         img_container.style.width = width + "px";
 
-        var select_before = document.getElementById("select-before");
-        var select_after = document.getElementById("select-after");
         if (has_run) {
             img_container.removeEventListener("wheel", zoom);
             select_before.removeEventListener("change", changeBefore);
             select_after.removeEventListener("change", changeAfter);
+
+            // Reset zoom on changing image.
+            before.style = null;
+            after.style = null;
+            zoom_text.textContent = "1.00";
         }
         img_container.addEventListener("wheel", zoom);
         select_before.addEventListener("change", changeBefore);
@@ -115,7 +121,6 @@ function run() {
             const delta = Math.sign(e.deltaY);
             const zoom_factor = parseFloat(style.getPropertyValue("--zoom-factor"));
             const zoom_speed = parseFloat(style.getPropertyValue("--zoom-speed"));
-            const zoom_text = document.getElementById("zoom-level");
 
             if (delta === 1 && scale - zoom_speed * zoom_factor - 1 <= Number.EPSILON) {
                 scale = 1;
