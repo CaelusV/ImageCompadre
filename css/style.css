@@ -31,6 +31,12 @@ body {
     top: 30px;
 }
 
+.center {
+    display: flex;
+    align-items: center;
+    min-height: 90vh;
+}
+
 .description {
     bottom: 20px;
     left: 20px;
