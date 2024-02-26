@@ -6,7 +6,8 @@
     --after: img_forest.jpg;
     /* Height is automatically scaled with width */
     --img-width-min: 1000px;
-    --img-width-max: 1600px;
+    --img-width-max: 1440px;
+    --img-height-max: 810px;
     --zoom-factor: 0.15; /* Base zoom value to calculate zoom speed from */
     --zoom-speed: 1; /* How much you zoom when using mousewheel */
 }

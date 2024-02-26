@@ -54,17 +54,49 @@ function run() {
         const width_min = parseInt(width_min_str.replace("px", ""));
         var width_max_str = style.getPropertyValue('--img-width-max');
         const width_max = parseInt(width_max_str.replace("px", ""));
+        var height_max_str = style.getPropertyValue('--img-height-max');
+        const height_max = parseInt(height_max_str.replace("px", ""));
 
-        // Use the greatest width of the two images, and the height of that image.
-        const width = clamp(
-            Math.max(before.naturalWidth, after.naturalWidth),
-            width_min,
-            width_max
-        );
-        const ratio = width / Math.max(before.naturalWidth, after.naturalWidth);
-        const height = Math.round(
-            (before.naturalWidth > after.naturalWidth ? before.naturalHeight : after.naturalHeight) * ratio
-        );
+        const wh_max_ratio = width_max / height_max;
+        const ratio1 = before.naturalWidth / before.naturalHeight;
+        const ratio2 = after.naturalWidth / after.naturalHeight;
+        let width1_adjusted;
+        let height1_adjusted;
+        let width2_adjusted;
+        let height2_adjusted;
+        // height needs to be adjusted based on clamped width.
+        if (wh_max_ratio <= ratio1) {
+            width1_adjusted = clamp(before.naturalWidth, width_min, width_max);
+            height1_adjusted = width1_adjusted / ratio1;
+        }
+        else {
+            // width needs to be adjusted based on clamped height.
+            height1_adjusted = clamp(before.naturalHeight, 0, height_max);
+            width1_adjusted = height1_adjusted * ratio1;
+        }
+
+        // height needs to be adjusted based on clamped width.
+        if (wh_max_ratio <= ratio2) {
+            width2_adjusted = clamp(after.naturalWidth, width_min, width_max);
+            height2_adjusted = width2_adjusted / ratio2;
+        }
+        else {
+            // width needs to be adjusted based on clamped height.
+            height2_adjusted = clamp(after.naturalHeight, 0, height_max);
+            width2_adjusted = height2_adjusted * ratio2;
+        }
+
+        // Use the width and height that is greatest after adjustment.
+        let width;
+        let height;
+        if (width1_adjusted * height1_adjusted >= width2_adjusted * height2_adjusted) {
+            width = width1_adjusted;
+            height = height1_adjusted;
+        }
+        else {
+            width = width2_adjusted;
+            height = height2_adjusted;
+        }
 
         before.setAttribute('width', width);
         before.setAttribute('height', height);
